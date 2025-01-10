@@ -8,7 +8,7 @@ async function translate(message) {
   if (!message.channel.topic) return false;
 
   const translationConfig = message.channel.topic.trim().match(/deepl-translate\((.+)\)/);
-  if (!translationConfig) return true;
+  if (!translationConfig) return false;
 
   const targetLang = translationConfig[1];
   if (!targetLang) return true;

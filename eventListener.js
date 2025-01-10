@@ -29,7 +29,7 @@ function eventListener() {
   ////////////client ready////////////
   client.once('ready', () => {
     console.log('準備完了');
-    client.user.setPresence({ activities: [{ name: 'トーセンジョーダン' }] });
+    client.user.setPresence({ activities: [{ name: 'トーセンジョーダン' }] }); 
 
     //to followUp the event emitted before the bot is ready 
     client.on('interactionCreate', async interaction => {

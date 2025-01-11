@@ -29,7 +29,7 @@ function sendOnce() {
 
 function eventListener() {
   ////////////client ready////////////
-  client.once('ready', () => {
+  client.once('ready', async () => {
     console.log('準備完了');
     client.user.setPresence({ activities: [{ name: 'トーセンジョーダン' }] });
 
@@ -74,27 +74,27 @@ function eventListener() {
   });
 
   ////////////guild message update////////////
-  client.on('messageUpdate', (oldMessage, newMessage) => {
+  client.on('messageUpdate', async (oldMessage, newMessage) => {
     if (isNotUser(newMessage)) return;
     if (isNotInGuild(newMessage)) return;
 
     // reaction command
-    const isReaction = reaction(newMessage);
+    const isReaction = await reaction(newMessage);
     if (isReaction) return;
   });
 
   ////////////guild member remove////////////
-  client.on('guildMemberRemove', member => {    
+  client.on('guildMemberRemove', async member => {    
     // leave command
     sendMsg(LOG_CHANNEL_ID, `退出: ${member.user.tag}`);
   })
 
   ////////////DM message////////////
-  client.on('messageCreate', message => {
+  client.on('messageCreate', async message => {
     if (isNotUser(message)) return;
     if (!isNotInGuild(message)) return;
     
-    const isCharaMessage = charaMessage(message);
+    const isCharaMessage = await charaMessage(message);
     if (isCharaMessage) return;
 
     const text = `${message.author.username}:\n${message.content}`;

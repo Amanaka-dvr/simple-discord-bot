@@ -14,7 +14,7 @@ const embedContent = {
   title: '',
   description: '今日の運勢を占ってみるのか！？',
   color: 0xDA3C57,
-  timestamp: new Date(),
+  timestamp: '',
   thumbnail: {
     url: 'https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item13.png'
   }
@@ -76,6 +76,7 @@ async function omikuji(message) {
   await writeJson(FILE_PATH, usedUserData);
 
   embedContent.title = `${message.member.displayName} の うまみくじ`;
+  embedContent.timestamp = new Date();
   const embedMsg = await message.channel.send({ embeds: [embedContent] });
 
   //use syncTimeout()

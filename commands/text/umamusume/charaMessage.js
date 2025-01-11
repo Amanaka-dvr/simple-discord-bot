@@ -17,7 +17,7 @@ const embedContent = {
   title: '',
   description: '',
   color: '',
-  timestamp: new Date()
+  timestamp: ''
 };
 
 async function charaMessage(message) {
@@ -28,8 +28,7 @@ async function charaMessage(message) {
   const msg = message.content.split(' ');
   const name = msg[1];
   const color = parseInt(msg[2], 16);
-  const text = msg[3].replace(/\\n/g, '\n');;
-  
+  const text = msg[3].replace(/\\n/g, '\n');
 
   const uma = umaData.find(({ icon_key }) => icon_key === name);
   if (!uma) {
@@ -42,6 +41,7 @@ async function charaMessage(message) {
   embedContent.author.icon_url = url;
   embedContent.description = text;
   embedContent.color = color;
+  embedContent.timestamp = new Date();
   sendMsg(message.channel.id, { embeds: [embedContent] });
   return true;
 }

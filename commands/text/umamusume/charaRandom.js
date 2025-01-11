@@ -20,10 +20,10 @@ const embedContent = {
     name: 'ゴールドシップ',
     icon_url: 'https://cdn.discordapp.com/avatars/933850580441497621/b8881916b0e86aa40c0914307c6a306c.png?size=4096'
   },
-  title: `ランダムウマ娘選出！`,
+  title: 'ランダムウマ娘選出！',
   description: '',
   color: 0xDA3C57,
-  timestamp: new Date(),
+  timestamp: '',
   thumbnail: {
     url: ''
   }
@@ -62,6 +62,7 @@ async function charaRandom(message) {
   const url = FORMER_URL + randomCharaData.icon_key + LATTER_URL;
   embedContent.description = text;
   embedContent.thumbnail.url = url;
+  embedContent.timestamp = new Date();
   sendReply(message, { embeds: [embedContent] });
   return true;
 }

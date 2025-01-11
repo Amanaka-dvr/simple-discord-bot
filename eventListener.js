@@ -14,9 +14,11 @@ import { executeSlash } from './commands/slash.js';
 
 import { security } from './commands/text/security/security.js';
 import { inpersonate } from './commands/text/inpersonate/inpersonate.js';
-import { translate } from './commands/text/translation/translate.js';
+import { translate } from './commands/text/translation/translation.js';
 import { reaction } from './commands/text/reaction/reaction.js';
 import { text } from './commands/text.js';
+
+import { charaMessage } from './commands/text/umamusume/charaMessage.js';
 
 const LOG_CHANNEL_ID = '934986946663559198';
 const CHIEF_ADMIN_ID = '786914493640081438';
@@ -91,7 +93,10 @@ function eventListener() {
   client.on('messageCreate', message => {
     if (isNotUser(message)) return;
     if (!isNotInGuild(message)) return;
-  
+    
+    const isCharaMessage = charaMessage(message);
+    if (isCharaMessage) return;
+
     const text = `${message.author.username}:\n${message.content}`;
     sendDM(CHIEF_ADMIN_ID, text);
   });

@@ -29,6 +29,16 @@ const embedContent = {
   }
 };
 
+async function randomCharaPrint(randomCharaData) {
+  const text = `選ばれたウマ娘は ${randomCharaData.name_jp} だ！`;
+  const url = FORMER_URL + randomCharaData.icon_key + LATTER_URL;
+  embedContent.description = text;
+  embedContent.thumbnail.url = url;
+  embedContent.timestamp = new Date();
+  sendReply(message, { embeds: [embedContent] });
+  return true;
+}
+
 async function charaRandom(message) {
   if (!message.content.match(/!uma/)) return false;
 
@@ -40,7 +50,15 @@ async function charaRandom(message) {
 
   // for announcement
   if (!isNotAdmin(message) && message.content.match(/test/)) {
-    randVal = 125;
+    const startID = 127;
+    const endID = 134;
+
+    for (let i = startID; i <= endID; i++) {
+      const randomCharaData = umaData.find(({ id }) => id === i);
+      randomCharaPrint(randomCharaData);
+    }
+
+    return true;
   }
 
   // for trolls
@@ -58,12 +76,7 @@ async function charaRandom(message) {
     randomCharaData = umaData.find(({ id }) => id === randVal);
   }
 
-  const text = `選ばれたウマ娘は ${randomCharaData.name_jp} だ！`;
-  const url = FORMER_URL + randomCharaData.icon_key + LATTER_URL;
-  embedContent.description = text;
-  embedContent.thumbnail.url = url;
-  embedContent.timestamp = new Date();
-  sendReply(message, { embeds: [embedContent] });
+  randomCharaPrint(randomCharaData);
   return true;
 }
 

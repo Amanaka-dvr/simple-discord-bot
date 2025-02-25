@@ -29,7 +29,7 @@ const embedContent = {
   }
 };
 
-async function randomCharaPrint(randomCharaData) {
+async function randomCharaPrint(message, randomCharaData) {
   const text = `選ばれたウマ娘は ${randomCharaData.name_jp} だ！`;
   const url = FORMER_URL + randomCharaData.icon_key + LATTER_URL;
   embedContent.description = text;
@@ -55,7 +55,7 @@ async function charaRandom(message) {
 
     for (let i = startID; i <= endID; i++) {
       const randomCharaData = umaData.find(({ id }) => id === i);
-      randomCharaPrint(randomCharaData);
+      randomCharaPrint(message, randomCharaData);
     }
 
     return true;
@@ -76,7 +76,7 @@ async function charaRandom(message) {
     randomCharaData = umaData.find(({ id }) => id === randVal);
   }
 
-  randomCharaPrint(randomCharaData);
+  randomCharaPrint(message, randomCharaData);
   return true;
 }
 

@@ -1,39 +1,20 @@
+import { EmbedBuilder } from 'discord.js';
 import {
   sendReply,
   readJson,
   writeJson,
-  syncTimeout
+  syncTimeout,
+  randomInt
 } from '../../../util.js';
 
-const FILE_PATH = './omikuzi.json';
-const embedContent = {
-  author: {
-    name: 'ゴールドシップ',
-    icon_url: 'https://cdn.discordapp.com/avatars/933850580441497621/b8881916b0e86aa40c0914307c6a306c.png?size=4096'
-  },
-  title: '',
-  description: '今日の運勢を占ってみるのか！？',
-  color: 0xDA3C57,
-  timestamp: '',
-  thumbnail: {
-    url: 'https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item13.png'
-  }
-};
-const weight = [0.001, 0.009, 0.02, 0.07, 0.20, 0.50, 0.10, 0.07, 0.03];
-const luck = ['\nスーパースペシャル特大吉！', '\n超吉！', '\n大吉！', '\n吉！', '\n中吉！', '\n小吉！', '\n末吉！', '\n凶！', '\n大凶！'];
-const explanation = [
-  '\n運勢が限界突破しています！神がかっていますね！',
-  '\n向かうところ敵なし！どんな勝負にも勝てそうです！',
-  '\nおお！開運パワー全開ですね！',
-  '\nスピリチュアルパワーがみなぎっています！',
-  '\nなかなかラッキーですね！',
-  '\nどっちつかずですが、普通が一番です！',
-  '\n家で休んでいたほうが良さそうです……',
-  '\nこ、これは…厄落とししないとぉ〜！',
-  '\n靴ひもが切れたり、側溝に落ちたり、黒猫を見かけたり、物が壊れたり、最低保証だったりもう救いはありません～！'
-];
+const USER_FILE_PATH = './omikuzi.json';
+const CHARA_FILE_PATH = './uma_chara.json';
+const FORMER_URL = 'https://static.kouryaku.tools/umamusume/images/characters/';
+const LATTER_URL = '/icon.png';
+
+const DEFAULT_ID = 56;
+const defaultWeight = [0, 0.03, 0.07, 0.20, 0.40, 0.20, 0.10, 0];
 const thumbnail = [
-  'https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item12.png',
   'https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item12.png',
   'https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item12.png',
   'https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item23.png',
@@ -44,72 +25,106 @@ const thumbnail = [
   'https://img.gamewith.jp/article_tools%2Fuma-musume%2Fgacha%2Ffukubiki_5.png'
 ];
 
-/*
-const weight = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1.0];
-const luck = ['', '', '', '', '', '', '', '', '', '\n確率だけは最強！'];
-const explanation = ['', '', '', '', '', '', '', '', '', '\nめちゃくちゃ運は良いと思うんですけど、降ってきた隕石があなたにクリティカルヒットするかも！'];
-const thumbnail = ['', '', '', '', '', '', '', '', '', 'https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item12.png'];
-//*/
-
 async function resetOmikuji() {
   const date = new Date();
   date.setHours(date.getHours() + 9);
   const jstDate = date.getDate();
-  const omikuji = await readJson(FILE_PATH);
+  const omikuji = await readJson(USER_FILE_PATH);
   const omikujiDate = omikuji.date;
   const isChangedDate = jstDate !== omikujiDate;
   if (!isChangedDate) return;
   const usedUserData = { "date": jstDate, "name": [] };
-  await writeJson(FILE_PATH, usedUserData);
+  await writeJson(USER_FILE_PATH, usedUserData);
 }
 
 async function omikuji(message) {
   if (!message.content.match(/!今日の運勢/)) return false;
 
-  let usedUser = await readJson(FILE_PATH);
+  ///*
+  let usedUser = await readJson(USER_FILE_PATH);
   if (usedUser.name.includes(message.author.id)) {
     sendReply(message, 'おみくじは一日一回まで！');
     return true;
   }
   usedUser.name.push(message.author.id);
   const usedUserData = { "date": usedUser.date, "name": usedUser.name };
-  await writeJson(FILE_PATH, usedUserData);
+  await writeJson(USER_FILE_PATH, usedUserData);
+  //*/
 
-  embedContent.title = `${message.member.displayName} の うまみくじ`;
-  embedContent.timestamp = new Date();
+  let embedContent = new EmbedBuilder()
+    .setTitle(`${message.member.displayName} の うまみくじ`)
+    .setThumbnail('https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item13.png')
+    .setColor(0xFFFFFF)
+    .setTimestamp(new Date);
   const embedMsg = await message.channel.send({ embeds: [embedContent] });
 
-  //use syncTimeout()
-  await syncTimeout(2000);
-  embedContent.description = 'あいつに聞いてみようぜ！';
-  embedMsg.edit({ embeds: [embedContent] });
-  await syncTimeout(2000);
-  embedContent.author.name = 'マチカネフクキタル';
-  embedContent.author.icon_url = 'https://lh3.googleusercontent.com/vi-vu8EV0hbgGH9yRhmMl-euftAA_U9_TumQ3TOfZ9t0YPWXHbPwsgydbpdgaYmOnUtXqxn59TaHE1nGwFfUBK8W-rBsXh39MdUpBkblvGY=rw';
-  embedContent.description = 'おみくじですね！';
-  embedMsg.edit({ embeds: [embedContent] });
-  await syncTimeout(2000);
-  embedContent.description = 'はんにゃか〜…！ふんにゃか〜…！';
-  embedMsg.edit({ embeds: [embedContent] });
-  await syncTimeout(2000);
-  embedContent.description = '出ましたっ！';
-  embedMsg.edit({ embeds: [embedContent] });
+  const umajson = await readJson(CHARA_FILE_PATH);
+  const umaData = umajson.data;
+  const len = umaData.length;
 
-  const randVal = Math.random();
-  let text = '';
+  const randVal_ID = randomInt(1, len);
+  console.log(randVal_ID);
+  let randomCharaData = umaData.find(({ id }) => id === randVal_ID);
+  if (randomCharaData.name_jp === '' || randomCharaData.omikuji_start === '') {
+    randomCharaData = umaData.find(({ id }) => id === DEFAULT_ID);
+  }
+
+  //use syncTimeout()
+  await syncTimeout(1000);
+  embedContent = new EmbedBuilder()
+    .setAuthor({ name: randomCharaData.name_jp, iconURL: FORMER_URL + randomCharaData.icon_key + LATTER_URL })
+    .setTitle(`${message.member.displayName} の うまみくじ`)
+    .setDescription(randomCharaData.omikuji_start)
+    .setThumbnail('https://img.gamewith.jp/article_tools/uma-musume/gacha/i_item13.png')
+    .setColor(parseInt(randomCharaData.color, 16) || 0xFFFFFF)
+    .setTimestamp(new Date);
+  embedMsg.edit({ embeds: [embedContent] });
+  await syncTimeout(4000);
+  embedContent = new EmbedBuilder()
+    .setTitle(`${message.member.displayName} の うまみくじ`)
+    .setDescription('結果は……')
+    .setColor(parseInt(randomCharaData.color, 16) || 0xFFFFFF)
+    .setTimestamp(new Date);
+  embedMsg.edit({ embeds: [embedContent] });
+  await syncTimeout(1000);
+
+  let weight = randomCharaData.omikuji_weight;
+  if (weight.length === 0) {
+    weight = defaultWeight;
+  }
+  const result = randomCharaData.omikuji_result;
+
+  let title = '';
+  let description = '';
   let image = '';
+  
+  const randVal_luck = Math.random();
   let sumWeight = 0;
   for (let i = 0; i < weight.length; i++) {
     sumWeight += weight[i];
-    if (randVal < sumWeight) {
-      text = luck[i] + explanation[i];
+    if (randVal_luck < sumWeight) {
+      title = '結果は……\n' + result[i].title + '！';
+      description = result[i].description;
       image = thumbnail[i];
       break;
     }
   }
+
+  embedContent = new EmbedBuilder()
+    .setTitle(`${message.member.displayName} の うまみくじ`)
+    .setDescription(title)
+    .setThumbnail(image)
+    .setColor(parseInt(randomCharaData.color, 16) || 0xFFFFFF)
+    .setTimestamp(new Date);
+  embedMsg.edit({ embeds: [embedContent] });
   await syncTimeout(2000);
-  embedContent.description = '出ましたっ！' + text;
-  embedContent.thumbnail.url = image;
+  embedContent = new EmbedBuilder()
+    .setAuthor({ name: randomCharaData.name_jp, iconURL: FORMER_URL + randomCharaData.icon_key + LATTER_URL })
+    .setTitle(`${message.member.displayName} の うまみくじ`)
+    .setDescription(description)
+    .setThumbnail(image)
+    .setColor(parseInt(randomCharaData.color, 16) || 0xFFFFFF)
+    .setTimestamp(new Date);
   embedMsg.edit({ embeds: [embedContent] });
   return true;
 }

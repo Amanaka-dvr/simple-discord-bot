@@ -22,7 +22,7 @@ const embedContent = {
   },
   title: 'ランダムウマ娘選出！',
   description: '',
-  color: 0xDA3C57,
+  color: 0xFFFFFF,
   timestamp: '',
   thumbnail: {
     url: ''
@@ -33,6 +33,7 @@ async function randomCharaPrint(message, randomCharaData) {
   const text = `選ばれたウマ娘は ${randomCharaData.name_jp} だ！`;
   const url = FORMER_URL + randomCharaData.icon_key + LATTER_URL;
   embedContent.description = text;
+  embedContent.color = parseInt(randomCharaData.color, 16) || 0xFFFFFF;
   embedContent.thumbnail.url = url;
   embedContent.timestamp = new Date();
   sendReply(message, { embeds: [embedContent] });

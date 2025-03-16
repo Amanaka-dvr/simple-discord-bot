@@ -40,7 +40,7 @@ async function resetOmikuji() {
 
 async function deleteID(message) {
   if (isNotAdmin(message)) return false;
-  if (!message.content.match(/!delete/)) return false;
+  if (!message.content.match(/!omikuji_del/)) return false;
 
   const regExp = /[^( |　)]+/g;
   const str = message.content.match(regExp);

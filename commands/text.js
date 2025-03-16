@@ -4,7 +4,7 @@ import {
   sendReply
 } from '../util.js';
 
-import { omikuji } from './text/umamusume/omikuji.js';
+import { omikuji, deleteID } from './text/umamusume/omikuji.js';
 import { charaRandom } from './text/umamusume/charaRandom.js';
 import { courseRandom } from './text/umamusume/courseRandom.js';
 import { weaponRandom } from './text/apex/weaponRandom.js';
@@ -21,6 +21,9 @@ async function prefixCommand(message) {
 
   const isOmikuji = await omikuji(message);
   if (isOmikuji) return true;
+
+  const isDeleteID = await deleteID(message);
+  if (isDeleteID) return true;
 
   const isCharaRandom = await charaRandom(message);
   if (isCharaRandom) return true;

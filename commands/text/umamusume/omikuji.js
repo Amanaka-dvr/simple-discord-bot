@@ -4,7 +4,8 @@ import {
   readJson,
   writeJson,
   syncTimeout,
-  randomInt
+  randomInt,
+  isNotAdmin
 } from '../../../util.js';
 
 const USER_FILE_PATH = './omikuzi.json';
@@ -33,8 +34,27 @@ async function resetOmikuji() {
   const omikujiDate = omikuji.date;
   const isChangedDate = jstDate !== omikujiDate;
   if (!isChangedDate) return;
-  const usedUserData = { "date": jstDate, "name": [] };
+  const usedUserData = { "date": jstDate, "id": [] };
   await writeJson(USER_FILE_PATH, usedUserData);
+}
+
+async function deleteID(message) {
+  if (isNotAdmin(message)) return false;
+  if (!message.content.match(/!delete/)) return false;
+
+  const regExp = /[^( |　)]+/g;
+  const str = message.content.match(regExp);
+  const id = str[1];
+  let usedUser = await readJson(USER_FILE_PATH);
+  if (!usedUser.id.includes(id)) {
+    sendReply(message, 'そのIDは存在しません。');
+    return true;
+  };
+  usedUser.id = usedUser.id.filter((value) => value !== id);
+  const usedUserData = { "date": usedUser.date, "id": usedUser.id };
+  await writeJson(USER_FILE_PATH, usedUserData);
+  sendReply(message, `<@${id}> のおみくじ使用履歴を削除しました。`);
+  return true;
 }
 
 async function omikuji(message) {
@@ -42,12 +62,12 @@ async function omikuji(message) {
 
   ///*
   let usedUser = await readJson(USER_FILE_PATH);
-  if (usedUser.name.includes(message.author.id)) {
+  if (usedUser.id.includes(message.author.id)) {
     sendReply(message, 'おみくじは一日一回まで！');
     return true;
   }
-  usedUser.name.push(message.author.id);
-  const usedUserData = { "date": usedUser.date, "name": usedUser.name };
+  usedUser.id.push(message.author.id);
+  const usedUserData = { "date": usedUser.date, "id": usedUser.id };
   await writeJson(USER_FILE_PATH, usedUserData);
   //*/
 
@@ -129,4 +149,4 @@ async function omikuji(message) {
   return true;
 }
 
-export { omikuji, resetOmikuji };
+export { omikuji, deleteID, resetOmikuji };

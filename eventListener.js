@@ -20,7 +20,7 @@ import { text } from './commands/text.js';
 
 import { charaMessage } from './commands/text/umamusume/charaMessage.js';
 
-const LOG_CHANNEL_ID = '934986946663559198';
+const LOG_CHANNEL_ID = [['918212991135125556', '934986946663559198'], ['1066009178973405234', '1102514696608825394']];
 const CHIEF_ADMIN_ID = '786914493640081438';
 
 function sendOnce() {
@@ -86,7 +86,9 @@ function eventListener() {
   ////////////guild member remove////////////
   client.on('guildMemberRemove', async member => {    
     // leave command
-    sendMsg(LOG_CHANNEL_ID, `退出: ${member.user.tag}`);
+    const guild = member.guild.id;
+    const logChannelID = LOG_CHANNEL_ID.find((id) => id.includes(guild))[1];
+    sendMsg(logChannelID, `退出: ${member.user.tag}`);
   })
 
   ////////////DM message////////////

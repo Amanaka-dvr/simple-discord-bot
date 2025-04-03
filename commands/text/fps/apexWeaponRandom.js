@@ -7,7 +7,9 @@ const hardUser = [
   '464354759881523211'
 ]
 const veryHardUser = [
-  '852923175406141460'
+  '852923175406141460',
+  '1035154954412888104',
+  '308260688235724801'
 ]
 
 const weaponsTableNormal = [
@@ -81,7 +83,7 @@ const weaponsTableVeryHard = [
   '素手' //13
 ];
 
-async function weaponRandom(message) {
+async function apexWeaponRandom(message) {
   if (!message.content.match(/!apex武器縛り/)) return false;
 
   let randoms = [];
@@ -121,4 +123,4 @@ async function weaponRandom(message) {
   return true;
 }
 
-export { weaponRandom };
+export { apexWeaponRandom };

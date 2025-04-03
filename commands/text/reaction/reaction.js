@@ -1,6 +1,7 @@
 import { sendReply } from '../../../util.js';
 
 async function powerMessage(message) {
+  if (message.guildId !== '918212991135125556') return false;
   const isPower = 
     message.author.id === '696698066597838849'
     || message.author.id === '910381775874834462'

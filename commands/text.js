@@ -7,14 +7,14 @@ import {
 import { omikuji, deleteID } from './text/umamusume/omikuji.js';
 import { charaRandom } from './text/umamusume/charaRandom.js';
 import { courseRandom } from './text/umamusume/courseRandom.js';
-import { weaponRandom } from './text/apex/weaponRandom.js';
+import { apexWeaponRandom } from './text/fps/apexWeaponRandom.js';
 import { dice } from './text/dice/dice.js';
 import { answer } from './text/answer/answer.js';
 import { factorization } from './text/factorization/factorization.js';
 import { code } from './text/code/code.js';
 import { aprilFool } from './text/tmp/aprilFool.js';
 
-const GUILD_ID = '918212991135125556';
+//const GUILD_ID = '918212991135125556'; read from each message's guildId
 
 async function prefixCommand(message) {
   if (!message.content.match('!')) return false;
@@ -31,8 +31,8 @@ async function prefixCommand(message) {
   const isCourseRandom = await courseRandom(message);
   if (isCourseRandom) return true;
 
-  const isWeaponRandom = await weaponRandom(message);
-  if (isWeaponRandom) return true;
+  const isApexWeaponRandom = await apexWeaponRandom(message);
+  if (isApexWeaponRandom) return true;
 
   const isDice = await dice(message);
   if (isDice) return true;
@@ -131,7 +131,8 @@ async function noPrefixCommand(message) {
 
   if (message.content.match(/入室日/)) {
     const id = message.author.id;
-    const guild = client.guilds.cache.find((g) => g.id === GUILD_ID);
+    const guildId = message.guildId;
+    const guild = client.guilds.cache.find((g) => g.id === guildId);
     const user = await guild.members.fetch(id);
     const timestamp = user.joinedTimestamp;
     const date = new Date(timestamp);
@@ -140,7 +141,7 @@ async function noPrefixCommand(message) {
     sendReply(message, `あなたは\n${jst}\nにこのサーバーに来ました。`);
     return true;
   }
-
+  
   return false;
 }
 

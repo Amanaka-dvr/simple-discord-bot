@@ -7,7 +7,7 @@ import {
 let emergency = false;
 let timeoutUsers = [];
 const blackList = process.env.BLACK_LIST.split(' ');
-const LOG_CHANNEL_ID = '934986946663559198';
+const LOG_CHANNEL_ID = [['918212991135125556', '934986946663559198'], ['1066009178973405234', '1102514696608825394']];
 
 async function emergencyMode(message) {
   if (isNotAdmin(message)) return false;
@@ -92,10 +92,13 @@ async function adminCommand(message) {
 }
 
 async function monitoredUser(message) {
+  const guildId = message.guildId;
+  const logChannelID = LOG_CHANNEL_ID.find((id) => id[0] === guildId)[1];
+
   if (timeoutUsers.includes(message.author.id)) {
     let title = '【タイムアウト中の人物の発言です】';
     let text = title + '\nuser:　' + message.member.displayName + '\nchannel:　<#' + message.channel.id + '>\ntext:\n' + message.content + '\n';
-    sendMsg(LOG_CHANNEL_ID, text);
+    sendMsg(logChannelID, text);
     message.delete();
     return true;
   }
@@ -103,7 +106,7 @@ async function monitoredUser(message) {
   if (blackList.includes(message.author.id)) {
     let title = '【要注意人物の発言です】';
     let text = title + '\nuser:　' + message.member.displayName + '\nchannel:　<#' + message.channel.id + '>\ntext:\n' + message.content + '\n';
-    sendMsg(LOG_CHANNEL_ID, text);
+    sendMsg(logChannelID, text);
     return true;
   }
 
@@ -111,16 +114,19 @@ async function monitoredUser(message) {
 }
 
 async function ngWord(message) {
+  const guildId = message.guildId;
+  const logChannelID = LOG_CHANNEL_ID.find((id) => id[0] === guildId)[1];
+
   if (message.content.match(/ﾀﾋね|56すぞ/)) {
     let title = '【禁止用語が含まれています】';
     let text = title + '\nuser:　' + message.member.displayName + '\nchannel:　<#' + message.channel.id + '>\ntext:\n' + message.content + '\n';
-    sendMsg(LOG_CHANNEL_ID, text);
+    sendMsg(logChannelID, text);
     return true;
   }
   if (message.content.match(/https?:\/\//)) {
     let title = '【外部サイトへのリンクが含まれています】';
     let text = title + '\nuser:　' + message.member.displayName + '\nuserID:　' + message.author.id + '\nchannel:　<#' + message.channel.id + '>\ntext:\n' + message.content + '\n';
-    sendMsg(LOG_CHANNEL_ID, text);
+    sendMsg(logChannelID, text);
     return true; //do not always return true if you use like music commands
   }
 
